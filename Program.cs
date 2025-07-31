@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using ProjectTwo.Data;
+
 namespace ProjectTwo
 {
     public class Program
@@ -15,6 +18,11 @@ namespace ProjectTwo
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString"));
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
