@@ -40,74 +40,95 @@ namespace ProjectTwo.Controllers
         [Route("InactiveItem")]
         public async Task<ActionResult<Itens>> InactiveItem(int id)
         {
-            var inactive = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
-
-            if(inactive != null)
+            try
             {
-                if(inactive.Amout != 0)
+                var inactive = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+
+                if (inactive != null)
                 {
-                    return Ok(new { warning = "Não é possível inativar produtos que possuem estoque." });
+                    if (inactive.Amout != 0)
+                    {
+                        return Ok(new { warning = "Não é possível inativar produtos que possuem estoque." });
+                    }
+                    else
+                    {
+                        inactive.StateCode = false;
+                        inactive.IsDeleted = true;
+                        inactive.DeletedOn = DateTime.Now;
+
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 else
                 {
-                    inactive.StateCode = false;
-                    inactive.IsDeleted = true;
-                    inactive.DeletedOn = DateTime.Now;
-
-                    await _context.SaveChangesAsync();
+                    return NotFound("Produto não encontrado.");
                 }
-            }
-            else
-            {
-                return NotFound("Produto não encontrado.");
-            }
 
-            return Ok(inactive);
+                return Ok(inactive);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpDelete]
         [Route("DeleteItem")]
         public async Task<ActionResult<Itens>> DeleteItem(int id)
         {
-            var deleteItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
-
-            if(deleteItem != null)
+            try
             {
-                if(deleteItem.StateCode == true)
-                {
-                    return Ok(new { warning = "Não é possível deletar um item ativo no sistema" });
-                }
-                else 
-                {
-                    _context.Itens.Remove(deleteItem);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                return NotFound("Produto não encontrado.");
-            }
+                var deleteItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
 
-            return Ok(id);
+                if (deleteItem != null)
+                {
+                    if (deleteItem.StateCode == true)
+                    {
+                        return Ok(new { warning = "Não é possível deletar um item ativo no sistema" });
+                    }
+                    else
+                    {
+                        _context.Itens.Remove(deleteItem);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    return NotFound("Produto não encontrado.");
+                }
+
+                return Ok(new {message= $"O produto '{deleteItem.Name}', de Id '{deleteItem.Id}', foi deletado."});
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPut]
         [Route("UpdateAmoutItens")]
         public async Task<ActionResult<Itens>> UpdateAmountItens(int id, int amount)
         {
-            var item = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
-
-            if(item != null)
+            try
             {
-                item.Amout = item.Amout - amount;
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                return NotFound("Produto não encontrado.");
-            }
+                var item = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
 
-            return Ok(item);
+                if (item != null)
+                {
+                    item.Amout = item.Amout - amount;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return NotFound("Produto não encontrado.");
+                }
+
+                return Ok(item);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
