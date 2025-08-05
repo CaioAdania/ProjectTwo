@@ -1,7 +1,7 @@
 ## 📌 Descrição
 A ideia desse projeto é aperfeiçoar meu conhecimento, sendo esse o primeiro projeto com padronizações, bons estudos a eu mesmo.
 
-Sistema CRUD completo para gerenciamento de "Mercado" e "Clientes". Permite cadastrar, listar, editar e desativar (soft delete) veículos, com autenticação de usuários, validação de dados e arquitetura em camadas.
+Sistema CRUD completo para gerenciamento de "Mercado" e "Clientes". Permite cadastrar, listar, editar e desativar (soft delete) veículos, com autenticação de usuários, validação de dados e arquitetura 
 
 ---
 
@@ -23,13 +23,6 @@ O diagrama abaixo ilustra a separação física dos projetos dentro da solução
 - Login com JWT (`POST /api/auth/login`)
 - Permissões por perfil: Admin ou Funcionário
 - Proteção das rotas com `[Authorize]`
-
-### Clientes
-- `GET /api/clients` → Listar todos os clientes ativos
-- `GET /api/clients/{id}` → Buscar um cliente por ID
-- `POST /api/clients` → Cadastrar um novo cliente
-- `PUT /api/clients/{id}` → Atualizar os dados de um cliente
-- `DELETE /api/clients/{id}` → Marcar cliente como inativo (soft delete)
 
 ---
 
