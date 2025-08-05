@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.Globalization;
+﻿using System.Globalization;
 
-namespace ProjectTwo.Models
+namespace ProjectTwo.Entities.Models
 {
-    public class Clients
+    public class ItensModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
-        public string? City { get; set; }
-        public int Number { get; set; }
-        public string? Country { get; set; }
+        public string? Description { get; set; }
+        public int? Amout { get; set; }
         public bool IsDeleted { get; set; }
         public bool StateCode { get; set; }
         public DateTime CreatedOn { get; set; }

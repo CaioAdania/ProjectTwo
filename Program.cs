@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
-using ProjectTwo.Data;
+using ProjectTwo.Infrastruture.Data;
+using ProjectTwo.Application.Interfaces;
+using ProjectTwo.Application.Services;
 
 namespace ProjectTwo
 {
@@ -21,6 +23,8 @@ namespace ProjectTwo
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString"));
             });
+
+            builder.Services.AddScoped<IClientsService, ClientsService>();
 
             var app = builder.Build();
 

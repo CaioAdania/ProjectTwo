@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProjectTwo.Data;
-using ProjectTwo.Models;
 using Microsoft.EntityFrameworkCore;
+using ProjectTwo.Infrastruture.Data;
+using ProjectTwo.Entities.Models;
+using ProjectTwo.Application.Interfaces;
+using ProjectTwo.Application.Services;
 
 namespace ProjectTwo.Controllers
 {
@@ -10,113 +12,112 @@ namespace ProjectTwo.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public ClientsController(AppDbContext context)
+        private readonly IClientsService _clientsService;
+        public ClientsController(IClientsService clientsService)
         {
-            _context = context;
+            _clientsService = clientsService;
         }
 
         [HttpGet]
         [Route("GetClients")]
-        public async Task<ActionResult<List<Clients>>> GetClients()
+        public async Task<ActionResult<List<ClientsModel>>> GetClients()
         {
-            var clients = await _context.Clients.ToListAsync();
+            var clients = await _clientsService.GetAllClientsAsync();
             return Ok(clients);
         }
 
         [HttpPost]
         [Route("AddClients")]
-        public async Task<ActionResult<Clients>> AddClients(Clients clients)
+        public async Task<ActionResult<ClientsModel>> AddClients(ClientsModel clients)
         {
-            _context.Clients.Add(clients);
-            await _context.SaveChangesAsync();
+            var addClient = await _clientsService.AddClientsAsync(clients);
 
             return Ok(clients);
         }
 
-        [HttpPut]
-        [Route("UpdateAddress")]
-        public async Task<ActionResult<Clients>> UpdateAddress(int id, string address)
-        {
-            try
-            {
-                var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
-                if (idClient != null)
-                {
-                    idClient.Address = address;
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    return NotFound("Clinte não localizado");
-                }
+        //[HttpPut]
+        //[Route("UpdateAddress")]
+        //public async Task<ActionResult<ClientsModel>> UpdateAddress(int id, string address)
+        //{
+        //    try
+        //    {
+        //        var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
+        //        if (idClient != null)
+        //        {
+        //            idClient.Address = address;
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        else
+        //        {
+        //            return NotFound("Clinte não localizado");
+        //        }
 
-                return Ok(idClient);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        return Ok(idClient);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        [HttpPut]
-        [Route("InactiveClient")]
-        public async Task<ActionResult<Clients>> InactiveClient(int id)
-        {
-            try
-            {
-                var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
-                if (idClient != null)
-                {
-                    idClient.StateCode = false;
-                    idClient.IsDeleted = true;
-                    idClient.DeletedOn = DateTime.UtcNow;
+        //[HttpPut]
+        //[Route("InactiveClient")]
+        //public async Task<ActionResult<ClientsModel>> InactiveClient(int id)
+        //{
+        //    try
+        //    {
+        //        var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
+        //        if (idClient != null)
+        //        {
+        //            idClient.StateCode = false;
+        //            idClient.IsDeleted = true;
+        //            idClient.DeletedOn = DateTime.UtcNow;
 
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    return NotFound("Cliente não encontrado.");
-                }
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        else
+        //        {
+        //            return NotFound("Cliente não encontrado.");
+        //        }
 
-                return Ok(idClient);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        return Ok(idClient);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
-        [HttpDelete]
-        [Route("DeleteClient")]
-        public async Task<ActionResult<Clients>> DeleteClient(int id)
-        {
-            try
-            {
-                var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
-                if (idClient != null)
-                {
-                    if (idClient.StateCode == true)
-                    {
-                        return Ok(new { warning = "Não é possível Deletar um Cliente ativo." });
-                    }
-                    else
-                    {
-                        _context.Clients.Remove(idClient);
-                        await _context.SaveChangesAsync();
+        //[HttpDelete]
+        //[Route("DeleteClient")]
+        //public async Task<ActionResult<ClientsModel>> DeleteClient(int id)
+        //{
+        //    try
+        //    {
+        //        var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
+        //        if (idClient != null)
+        //        {
+        //            if (idClient.StateCode == true)
+        //            {
+        //                return Ok(new { warning = "Não é possível Deletar um Cliente ativo." });
+        //            }
+        //            else
+        //            {
+        //                _context.Clients.Remove(idClient);
+        //                await _context.SaveChangesAsync();
 
-                        return Ok(new {message = $"o Cliente '{idClient.Name}', de Id '{idClient.Id}' foi deletado."});
-                    }
-                }
-                else
-                {
-                    return NotFound("Cliente não encontrado.");
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //                return Ok(new {message = $"o Cliente '{idClient.Name}', de Id '{idClient.Id}' foi deletado."});
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return NotFound("Cliente não encontrado.");
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
     }
 }

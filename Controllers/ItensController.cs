@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-using ProjectTwo.Data;
-using ProjectTwo.Models;
+using ProjectTwo.Entities.Models;
+using ProjectTwo.Infrastruture.Data;
 
 namespace ProjectTwo.Controllers
 {
@@ -19,7 +19,7 @@ namespace ProjectTwo.Controllers
 
         [HttpGet]
         [Route("GetItens")]
-        public async Task<ActionResult<List<Itens>>> GetItens()
+        public async Task<ActionResult<List<ItensModel>>> GetItens()
         {
             var itens = await _context.Itens.ToListAsync();
 
@@ -28,7 +28,7 @@ namespace ProjectTwo.Controllers
 
         [HttpPost]
         [Route("AddItem")]
-        public async Task<ActionResult<Itens>> AddItens(Itens itens)
+        public async Task<ActionResult<ItensModel>> AddItens(ItensModel itens)
         {
             _context.Itens.Add(itens);
             await _context.SaveChangesAsync();
@@ -38,7 +38,7 @@ namespace ProjectTwo.Controllers
 
         [HttpPut]
         [Route("InactiveItem")]
-        public async Task<ActionResult<Itens>> InactiveItem(int id)
+        public async Task<ActionResult<ItensModel>> InactiveItem(int id)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace ProjectTwo.Controllers
 
         [HttpDelete]
         [Route("DeleteItem")]
-        public async Task<ActionResult<Itens>> DeleteItem(int id)
+        public async Task<ActionResult<ItensModel>> DeleteItem(int id)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace ProjectTwo.Controllers
 
         [HttpPut]
         [Route("UpdateAmoutItens")]
-        public async Task<ActionResult<Itens>> UpdateAmountItens(int id, int amount)
+        public async Task<ActionResult<ItensModel>> UpdateAmountItens(int id, int amount)
         {
             try
             {

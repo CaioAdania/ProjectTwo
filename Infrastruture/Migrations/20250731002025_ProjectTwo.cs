@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProjectTwo.Migrations
+namespace ProjectTwo.Infrastruture.Migrations
 {
     /// <inheritdoc />
     public partial class ProjectTwo : Migration
