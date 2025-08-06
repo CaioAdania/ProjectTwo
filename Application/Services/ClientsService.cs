@@ -2,6 +2,7 @@
 using ProjectTwo.Entities.Models;
 using ProjectTwo.Infrastruture.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ProjectTwo.Application.Services
 {
@@ -25,6 +26,20 @@ namespace ProjectTwo.Application.Services
             await _context.SaveChangesAsync();
 
             return clients;
+        }
+        public async Task<ClientsModel> UpdateAddressUserAsync(int id, string address)
+        {
+            var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if(idClient == null)
+            {
+                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+            }
+
+            idClient.Address = address;
+            await _context.SaveChangesAsync();
+
+            return idClient;
         }
     }
 }

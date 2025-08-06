@@ -7,5 +7,6 @@ namespace ProjectTwo.Application.Interfaces
     {
         Task<List<ClientsModel>> GetAllClientsAsync();
         Task<ClientsModel> AddClientsAsync(ClientsModel client);
+        Task<ClientsModel> UpdateAddressUserAsync(int id, string address);
     }
 }
