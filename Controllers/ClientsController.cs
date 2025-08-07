@@ -24,7 +24,7 @@ namespace ProjectTwo.Controllers
         /// </summary>
         /// <returns>Retorna o cliente pelo Id.</returns>
         [HttpGet]
-        [Route("GetClientById")]
+        [Route("{id}/GetClientById")]
         public async Task<ActionResult<List<ClientsModel>>> GetClientById(int id)
         {
             var client = await _clientsService.GetClientByIdAsync(id);
