@@ -10,5 +10,7 @@ namespace ProjectTwo.Application.Interfaces
         Task<ClientsModel> GetClientByIdAsync(int id);
         Task<ClientsModel> AddClientsAsync(ClientsModel client);
         Task<ClientsModel> UpdateClientAsync(int id, ClientsDTO dto);
+        Task<ClientsModel> InactiveClientAsync(int id);
+        Task<ClientsModel> ActiveClientAsync(int id);
     }
 }

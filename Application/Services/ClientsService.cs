@@ -74,6 +74,36 @@ namespace ProjectTwo.Application.Services
             return idClient;
         }
 
+        public async Task<ClientsModel> InactiveClientAsync(int id)
+        {
+            var client = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if(client == null)
+            {
+                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+            }
+
+            client.StateCode = false;
+            await _context.SaveChangesAsync();
+
+            return client;
+        }
+
+        public async Task<ClientsModel> ActiveClientAsync(int id)
+        {
+            var client = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if (client == null)
+            {
+                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+            }
+
+            client.StateCode = true;
+            await _context.SaveChangesAsync();
+
+            return client;
+        }
+
         public bool IsValidPhoneNumber(string phoneNumber)
         {
             var regex = new Regex(@"^[\d\s\-\(\)\+]+$");

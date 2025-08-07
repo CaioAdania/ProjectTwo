@@ -87,33 +87,47 @@ namespace ProjectTwo.Controllers
             }
         }
 
-        //[HttpPut]
-        //[Route("InactiveClient")]
-        //public async Task<ActionResult<ClientsModel>> InactiveClient(int id)
-        //{
-        //    try
-        //    {
-        //        var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
-        //        if (idClient != null)
-        //        {
-        //            idClient.StateCode = false;
-        //            idClient.IsDeleted = true;
-        //            idClient.DeletedOn = DateTime.UtcNow;
+        /// <summary>
+        /// Inativa o cliente pelo ID.
+        /// </summary>
+        /// <param name="id">ID do cliente para ser inativado.</param>
+        /// <returns> Retorna o Id do cliente. </returns>
+        [HttpPut]
+        [Route("{id}/InactiveClient")]
+        public async Task<ActionResult<ClientsModel>> InactiveClient(int id)
+        {
+            try
+            {
+                var idClient = _clientsService.InactiveClientAsync(id);
 
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Cliente não encontrado.");
-        //        }
+                return Ok($"O cliente de Id: {id}, foi inativado com sucesso.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
-        //        return Ok(idClient);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+        /// <summary>
+        /// Ativa o cliente pelo ID.
+        /// </summary>
+        /// <param name="id">ID do cliente para ser ativado.</param>
+        /// <returns> Retorna o Id do cliente. </returns>
+        [HttpPut]
+        [Route("{id}/ActiveClient")]
+        public async Task<ActionResult<ClientsModel>> ActiveClient(int id)
+        {
+            try
+            {
+                var idClient = _clientsService.ActiveClientAsync(id);
+
+                return Ok($"O cliente de Id: {id}, foi ativado com sucesso.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
         //[HttpDelete]
         //[Route("DeleteClient")]
