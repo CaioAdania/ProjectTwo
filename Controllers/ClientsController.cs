@@ -27,8 +27,8 @@ namespace ProjectTwo.Controllers
         [Route("{id}/GetClientById")]
         public async Task<ActionResult<List<ClientsModel>>> GetClientById(int id)
         {
-            var client = await _clientsService.GetClientByIdAsync(id);
-            return Ok(client);
+            var getClientId = await _clientsService.GetClientByIdAsync(id);
+            return Ok(getClientId);
         }
 
         /// <summary>
@@ -39,8 +39,8 @@ namespace ProjectTwo.Controllers
         [Route("GetClients")]
         public async Task<ActionResult<List<ClientsModel>>> GetClients()
         {
-            var clients = await _clientsService.GetAllClientsAsync();
-            return Ok(clients);
+            var getClients = await _clientsService.GetAllClientsAsync();
+            return Ok(getClients);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ProjectTwo.Controllers
         /// Inativa o cliente pelo ID.
         /// </summary>
         /// <param name="id">ID do cliente para ser inativado.</param>
-        /// <returns> Retorna o Id do cliente. </returns>
+        /// <returns> Retorna o Id do cliente inativado.</returns>
         [HttpPut]
         [Route("{id}/InactiveClient")]
         public async Task<ActionResult<ClientsModel>> InactiveClient(int id)
@@ -112,7 +112,7 @@ namespace ProjectTwo.Controllers
         /// Ativa o cliente pelo ID.
         /// </summary>
         /// <param name="id">ID do cliente para ser ativado.</param>
-        /// <returns> Retorna o Id do cliente. </returns>
+        /// <returns> Retorna o Id do cliente ativado. </returns>
         [HttpPut]
         [Route("{id}/ActiveClient")]
         public async Task<ActionResult<ClientsModel>> ActiveClient(int id)
@@ -129,36 +129,25 @@ namespace ProjectTwo.Controllers
             }
         }
 
-        //[HttpDelete]
-        //[Route("DeleteClient")]
-        //public async Task<ActionResult<ClientsModel>> DeleteClient(int id)
-        //{
-        //    try
-        //    {
-        //        var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
-        //        if (idClient != null)
-        //        {
-        //            if (idClient.StateCode == true)
-        //            {
-        //                return Ok(new { warning = "Não é possível Deletar um Cliente ativo." });
-        //            }
-        //            else
-        //            {
-        //                _context.Clients.Remove(idClient);
-        //                await _context.SaveChangesAsync();
+        /// <summary>
+        /// Deleta o cliente pelo ID.
+        /// </summary>
+        /// <param name="id">ID do cliente para ser deletado.</param>
+        /// <returns> Retorna o Id do cliente deletado. </returns>
+        [HttpDelete]
+        [Route("{id}/DeleteClient")]
+        public async Task<ActionResult<ClientsModel>> DeleteClient(int id)
+        {
+            try
+            {
+                var idClient = await _clientsService.DeleteClientAsync(id);
 
-        //                return Ok(new {message = $"o Cliente '{idClient.Name}', de Id '{idClient.Id}' foi deletado."});
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Cliente não encontrado.");
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+                return Ok($"O cliente de Id: {id}, foi deletado com sucesso.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace ProjectTwo.Application.Interfaces
         Task<ClientsModel> UpdateClientAsync(int id, ClientsDTO dto);
         Task<ClientsModel> InactiveClientAsync(int id);
         Task<ClientsModel> ActiveClientAsync(int id);
+        Task<ClientsModel> DeleteClientAsync(int id);
     }
 }

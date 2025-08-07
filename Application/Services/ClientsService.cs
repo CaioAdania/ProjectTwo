@@ -18,18 +18,18 @@ namespace ProjectTwo.Application.Services
         }
         public async Task<ClientsModel> GetClientByIdAsync(int id)
         {
-            var client = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
+            var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
 
-            if (client == null)
+            if (idClient == null)
             {
                 throw new ArgumentException("Cliente não localizado.");
             }
 
-            return client;
+            return idClient;
         }
         public async Task<List<ClientsModel>> GetAllClientsAsync()
         {
-            return await _context.Clients.ToListAsync();
+            return await _context.Clients.Where(c => c.IsDeleted != true).ToListAsync();
         }
 
         public async Task<ClientsModel> AddClientsAsync(ClientsModel clients)
@@ -76,34 +76,54 @@ namespace ProjectTwo.Application.Services
 
         public async Task<ClientsModel> InactiveClientAsync(int id)
         {
-            var client = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+            var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
-            if(client == null)
+            if(idClient == null)
             {
-                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
             }
 
-            client.StateCode = false;
+            idClient.StateCode = false;
             await _context.SaveChangesAsync();
 
-            return client;
+            return idClient;
         }
 
         public async Task<ClientsModel> ActiveClientAsync(int id)
         {
-            var client = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+            var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
-            if (client == null)
+            if (idClient == null)
             {
                 throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
             }
 
-            client.StateCode = true;
+            idClient.StateCode = true;
             await _context.SaveChangesAsync();
 
-            return client;
+            return idClient;
         }
 
+        public async Task<ClientsModel> DeleteClientAsync(int id)
+        {
+            var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if(idClient == null)
+            {
+                throw new ArgumentException($"Cliente não foi localizado pelo Id: {id}");
+            }
+            if(idClient.StateCode == true)
+            {
+                throw new ArgumentException($"Não é possivel deletar um cliente ativo");
+            }
+
+            idClient.IsDeleted = true;
+            idClient.DeletedOn = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return idClient;
+        }
         public bool IsValidPhoneNumber(string phoneNumber)
         {
             var regex = new Regex(@"^[\d\s\-\(\)\+]+$");
