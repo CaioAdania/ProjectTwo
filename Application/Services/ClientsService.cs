@@ -95,7 +95,7 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
             }
 
             idClient.StateCode = true;
@@ -110,11 +110,11 @@ namespace ProjectTwo.Application.Services
 
             if(idClient == null)
             {
-                throw new ArgumentException($"Cliente não foi localizado pelo Id: {id}");
+                throw new ArgumentException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
             }
             if(idClient.StateCode == true)
             {
-                throw new ArgumentException($"Não é possivel deletar um cliente ativo");
+                throw new ArgumentException($"Não é possivel deletar um cliente ativo"); //tratar todos throw
             }
 
             idClient.IsDeleted = true;
