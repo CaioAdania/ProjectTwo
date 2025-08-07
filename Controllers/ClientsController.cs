@@ -98,7 +98,7 @@ namespace ProjectTwo.Controllers
         {
             try
             {
-                var idClient = _clientsService.InactiveClientAsync(id);
+                var idClient = await _clientsService.InactiveClientAsync(id);
 
                 return Ok($"O cliente de Id: {id}, foi inativado com sucesso.");
             }
@@ -119,7 +119,7 @@ namespace ProjectTwo.Controllers
         {
             try
             {
-                var idClient = _clientsService.ActiveClientAsync(id);
+                var idClient = await _clientsService.ActiveClientAsync(id);
 
                 return Ok($"O cliente de Id: {id}, foi ativado com sucesso.");
             }
