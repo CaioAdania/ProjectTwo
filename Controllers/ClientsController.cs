@@ -9,7 +9,7 @@ using ProjectTwo.Application.DTOs;
 
 namespace ProjectTwo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ClientsController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace ProjectTwo.Controllers
         }
 
         /// <summary>
-        /// Retorna o cliente com base no Id da base de dados.
+        /// Retorna o cliente com base no Id.
         /// </summary>
         /// <returns>Retorna o cliente pelo Id.</returns>
         [HttpGet]
@@ -32,7 +32,7 @@ namespace ProjectTwo.Controllers
         }
 
         /// <summary>
-        /// Traz todos os clientes da base de dados.
+        /// Traz todos os clientes.
         /// </summary>
         /// <returns>Retorna todos os clientes da base de dados.</returns>
         [HttpGet]
@@ -57,7 +57,7 @@ namespace ProjectTwo.Controllers
         }
 
         /// <summary>
-        /// Atualiza o endereço de um cliente pelo ID.
+        /// Atualiza um cliente pelo ID.
         /// </summary>
         /// <param name="id">ID do cliente a ser atualizado.</param>
         /// <returns>Retorna o cliente atualizado.</returns>

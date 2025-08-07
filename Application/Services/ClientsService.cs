@@ -97,6 +97,10 @@ namespace ProjectTwo.Application.Services
             {
                 throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
             }
+            if(idClient.StateCode == true)
+            {
+                throw new KeyNotFoundException($"Não é possivel ativar um paciente ativo."); //tratar todos throw           Wrapper Object ajustar os erros com isso
+            }
 
             idClient.StateCode = true;
             await _context.SaveChangesAsync();
