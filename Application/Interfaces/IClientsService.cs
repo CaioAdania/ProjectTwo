@@ -1,4 +1,5 @@
-﻿using ProjectTwo.Application.Services;
+﻿using ProjectTwo.Application.DTOs;
+using ProjectTwo.Application.Services;
 using ProjectTwo.Entities.Models;
 
 namespace ProjectTwo.Application.Interfaces
@@ -6,7 +7,8 @@ namespace ProjectTwo.Application.Interfaces
     public interface IClientsService 
     {
         Task<List<ClientsModel>> GetAllClientsAsync();
+        Task<ClientsModel> GetClientByIdAsync(int id);
         Task<ClientsModel> AddClientsAsync(ClientsModel client);
-        Task<ClientsModel> UpdateAddressUserAsync(int id, string address);
+        Task<ClientsModel> UpdateClientAsync(int id, ClientsDTO dto);
     }
 }

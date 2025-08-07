@@ -20,6 +20,18 @@ namespace ProjectTwo.Controllers
         }
 
         /// <summary>
+        /// Retorna o cliente com base no Id da base de dados.
+        /// </summary>
+        /// <returns>Retorna o cliente pelo Id.</returns>
+        [HttpGet]
+        [Route("GetClientById")]
+        public async Task<ActionResult<List<ClientsModel>>> GetClientById(int id)
+        {
+            var client = await _clientsService.GetClientByIdAsync(id);
+            return Ok(client);
+        }
+
+        /// <summary>
         /// Traz todos os clientes da base de dados.
         /// </summary>
         /// <returns>Retorna todos os clientes da base de dados.</returns>
@@ -48,20 +60,23 @@ namespace ProjectTwo.Controllers
         /// Atualiza o endereço de um cliente pelo ID.
         /// </summary>
         /// <param name="id">ID do cliente a ser atualizado.</param>
-        /// <param name="address">Novo endereço do cliente.</param>
         /// <returns>Retorna o cliente atualizado.</returns>
         [HttpPut]
-        [Route("{id}/UpdateAddress")]
-        public async Task<ActionResult<ClientsModel>> UpdateAddress(int id, string address)
+        [Route("{id}/UpdateClient")]
+        public async Task<ActionResult<ClientsModel>> UpdateClient(int id, [FromBody] ClientsDTO dto)
         {
             try
             {
-                var idClient = await _clientsService.UpdateAddressUserAsync(id, address);
+                var idClient = await _clientsService.UpdateClientAsync(id, dto);
 
-                var result = new ClientsAddressDTO
+                var result = new ClientsDTO
                 {
                     Id = idClient.Id,
-                    Address = idClient.Address
+                    PhoneNumber = !string.IsNullOrEmpty(idClient.PhoneNumber) ? idClient.PhoneNumber : null,
+                    Email = !string.IsNullOrEmpty(idClient.Email) ? idClient.Email : null,
+                    Address = idClient.Address,
+                    City = idClient.City,
+                    Number = idClient.Number > 0 ? idClient.Number : (int?)null
                 };
 
                 return Ok(result);
