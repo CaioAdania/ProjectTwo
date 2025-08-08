@@ -71,12 +71,12 @@ namespace ProjectTwo.Controllers
 
                 var result = new ClientsDTO
                 {
-                    Id = idClient.Id,
-                    PhoneNumber = !string.IsNullOrEmpty(idClient.PhoneNumber) ? idClient.PhoneNumber : null,
-                    Email = !string.IsNullOrEmpty(idClient.Email) ? idClient.Email : null,
-                    Address = idClient.Address,
-                    City = idClient.City,
-                    Number = idClient.Number > 0 ? idClient.Number : (int?)null
+                    Id = dto.Id,
+                    PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : null,
+                    Email = !string.IsNullOrEmpty(dto.Email) ? dto.Email : null,
+                    Address = dto.Address,
+                    City = dto.City,
+                    Number = dto.Number > 0 ? dto.Number : (int?)null
                 };
 
                 return Ok(result);

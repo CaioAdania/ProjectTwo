@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ProjectTwo.Application.DTOs;
 using System.Text.RegularExpressions;
+using ProjectTwo.Entities.Response;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ProjectTwo.Application.Services
 {
@@ -16,117 +19,142 @@ namespace ProjectTwo.Application.Services
         {
             _context = context;
         }
-        public async Task<ClientsModel> GetClientByIdAsync(int id)
-        {
-            var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
 
-            if (idClient == null)
-            {
-                throw new ArgumentException("Cliente não localizado.");
-            }
-
-            return idClient;
-        }
         public async Task<List<ClientsModel>> GetAllClientsAsync()
         {
             return await _context.Clients.Where(c => c.IsDeleted != true).ToListAsync();
         }
 
-        public async Task<ClientsModel> AddClientsAsync(ClientsModel clients)
+        public async Task<OperationResult<ClientsModel>> GetClientByIdAsync(int id)
         {
+            var result = new OperationResult<ClientsModel>();
+            var idClient = _context.Clients.Where(c => c.Id == id).FirstOrDefault();
+
+            if (idClient == null)
+            {
+                result.ErrorMessage = "Cliente não localizado.";
+                result.Success = false;
+
+                return result;
+            }
+            else
+            {
+                return result.Ok(idClient);
+            }
+        }
+
+        public async Task<OperationResult<ClientsModel>>AddClientsAsync(ClientsModel clients)
+        {
+            var result = new OperationResult<ClientsModel>();
+
             _context.Clients.Add(clients);
             await _context.SaveChangesAsync();
 
-            return clients;
+            return result;
         }
-        public async Task<ClientsModel> UpdateClientAsync(int id, ClientsDTO dto)
+        public async Task<OperationResult<ClientsModel>> UpdateClientAsync(int id, ClientsDTO dto)
         {
+            var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             //ideia é refatorar no futuro
             if(idClient == null)
             {
-                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}");
+                return result.Fail(errorMessage: "Cliente não encontrado.", errorType: "Not Found 404");
             }
-            if(IsValidPhoneNumber(dto.PhoneNumber)) //melhorar
+            else if(dto.PhoneNumber != null) //melhorar
             {
-                idClient.PhoneNumber = dto.PhoneNumber;
+                if (!IsValidPhoneNumber(dto.PhoneNumber))
+                {
+                    idClient.PhoneNumber = dto.PhoneNumber;
+                }
             }
-            if(dto.Email != null)
+            else if(dto.Email != null)
             {
                 idClient.Email = dto.Email;
             }
-            if(dto.Address != null)
+            else if(dto.Address != null)
             {
                 idClient.Address = dto.Address;
             }
-            if(dto.City != null)
+            else if(dto.City != null)
             {
                 idClient.City = dto.City;
             }
-            if (dto.Number.HasValue)
+            else if (dto.Number.HasValue)
             {
                 idClient.Number = dto.Number.Value;
             }
+            else
+            {
+                await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
-
-            return idClient;
+                return result.Ok(idClient);
+            }
         }
 
-        public async Task<ClientsModel> InactiveClientAsync(int id)
+        public async Task<OperationResult<ClientsModel>>InactiveClientAsync(int id)
         {
+            var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if(idClient == null)
             {
-                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
+                return result.Fail(errorMessage: "Cliente não localizado.", errorType: "Not Found 404");
             }
+            else
+            {
+                idClient.StateCode = false;
+                await _context.SaveChangesAsync();
 
-            idClient.StateCode = false;
-            await _context.SaveChangesAsync();
-
-            return idClient;
+                return result.Ok(idClient);
+            }        
         }
 
-        public async Task<ClientsModel> ActiveClientAsync(int id)
+        public async Task<OperationResult<ClientsModel>> ActiveClientAsync(int id)
         {
+            var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if (idClient == null)
             {
-                throw new KeyNotFoundException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
+                return result.Fail(errorMessage: "Cliente não localizado", errorType: "Not Found 404");
             }
             if(idClient.StateCode == true)
             {
-                throw new KeyNotFoundException($"Não é possivel ativar um paciente ativo."); //tratar todos throw           Wrapper Object ajustar os erros com isso
+                return result.Fail(errorMessage: "Não é possivel ativar um cliente já ativo.", errorType: "Ok 200");
             }
+            else
+            {
+                idClient.StateCode = true;
+                await _context.SaveChangesAsync();
 
-            idClient.StateCode = true;
-            await _context.SaveChangesAsync();
-
-            return idClient;
+                return result.Ok(idClient);
+            }
         }
 
-        public async Task<ClientsModel> DeleteClientAsync(int id)
+        public async Task<OperationResult<ClientsModel>> DeleteClientAsync(int id)
         {
+            var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
 
             if(idClient == null)
             {
-                throw new ArgumentException($"Cliente não foi localizado pelo Id: {id}"); //tratar todos throw
+                return result.Fail(errorMessage: "Cliente não localizado.", errorType: "Not Found 404");
             }
             if(idClient.StateCode == true)
             {
-                throw new ArgumentException($"Não é possivel deletar um cliente ativo"); //tratar todos throw
+                return result.Fail(errorMessage: "Não é possivel deletar um cliente ativo.", errorType: "Ok 200");
             }
+            else
+            {
+                idClient.IsDeleted = true;
+                idClient.DeletedOn = DateTime.UtcNow;
 
-            idClient.IsDeleted = true;
-            idClient.DeletedOn = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
-
-            return idClient;
+                return result.Ok(idClient);
+            }
         }
         public bool IsValidPhoneNumber(string phoneNumber)
         {
