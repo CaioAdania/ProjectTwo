@@ -56,41 +56,52 @@ namespace ProjectTwo.Application.Services
         {
             var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
-
+            bool hasUpdates = false;
+            
             //ideia é refatorar no futuro
-            if(idClient == null)
+
+            if (idClient == null)
             {
                 return result.Fail(errorMessage: "Cliente não encontrado.", errorType: "Not Found 404");
             }
-            else if(dto.PhoneNumber != null) //melhorar
+
+            if (dto.PhoneNumber != null && IsValidPhoneNumber(dto.PhoneNumber))
             {
-                if (!IsValidPhoneNumber(dto.PhoneNumber))
-                {
-                    idClient.PhoneNumber = dto.PhoneNumber;
-                }
+                idClient.PhoneNumber = dto.PhoneNumber;
+                hasUpdates = true;
             }
-            else if(dto.Email != null)
+
+            if (dto.Email != null)
             {
                 idClient.Email = dto.Email;
+                hasUpdates = true;
             }
-            else if(dto.Address != null)
+
+            if (dto.Address != null)
             {
                 idClient.Address = dto.Address;
+                hasUpdates = true;
             }
-            else if(dto.City != null)
+
+            if (dto.City != null)
             {
                 idClient.City = dto.City;
+                hasUpdates = true;
             }
-            else if (dto.Number.HasValue)
+
+            if (dto.Number.HasValue)
             {
                 idClient.Number = dto.Number.Value;
+                hasUpdates = true;
             }
-            else
+
+            if (hasUpdates)
             {
                 await _context.SaveChangesAsync();
-
                 return result.Ok(idClient);
             }
+
+            return result.Fail("Nenhum campo válido foi fornecido para atualização", "Ok");
         }
 
         public async Task<OperationResult<ClientsModel>>InactiveClientAsync(int id)
