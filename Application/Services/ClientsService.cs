@@ -32,7 +32,7 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                return result.Fail(errorMessage: "Cliente não encontrado.", errorType: "Not Found 404");
+                return result.Fail("Cliente não encontrado.", "Not Found 404");
             }
             else
             {
@@ -53,7 +53,7 @@ namespace ProjectTwo.Application.Services
             }
             catch
             {
-                return result.Fail("Bad Request","500");
+                return result.Fail("Falta campos para serem preenchidos","BadRequest 400");
             }
         }
         public async Task<OperationResult<ClientsModel>> UpdateClientAsync(int id, ClientsDTO dto)
@@ -117,13 +117,16 @@ namespace ProjectTwo.Application.Services
             {
                 return result.Fail("Cliente não localizado.", "Not Found 404");
             }
-            else
+            if(idClient.StateCode == false)
             {
-                idClient.StateCode = false;
-                await _context.SaveChangesAsync();
+                return result.Fail("Não é possivel inativar um cliente já inativo", "Bad Request 400");
+            }
 
-                return result.Ok(idClient);
-            }        
+            idClient.StateCode = false;
+            await _context.SaveChangesAsync();
+
+            return result.Ok(idClient);
+    
         }
 
         public async Task<OperationResult<ClientsModel>> ActiveClientAsync(int id)
@@ -133,19 +136,18 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                return result.Fail(errorMessage: "Cliente não localizado", errorType: "Not Found 404");
+                return result.Fail("Cliente não localizado", "Not Found 404");
             }
             if(idClient.StateCode == true)
             {
-                return result.Fail(errorMessage: "Não é possivel ativar um cliente já ativo.", errorType: "Ok 200");
+                return result.Fail("Não é possivel ativar um cliente já ativo.", "Bad Request 400");
             }
-            else
-            {
-                idClient.StateCode = true;
-                await _context.SaveChangesAsync();
+           
+            idClient.StateCode = true;
+            await _context.SaveChangesAsync();
 
-                return result.Ok(idClient);
-            }
+            return result.Ok(idClient);
+
         }
 
         public async Task<OperationResult<ClientsModel>> DeleteClientAsync(int id)
@@ -159,17 +161,16 @@ namespace ProjectTwo.Application.Services
             }
             if(idClient.StateCode == true)
             {
-                return result.Fail("Não é possivel deletar um cliente ativo.", "Ok 200");
+                return result.Fail("Não é possivel deletar um cliente ativo.", "BadRequest 400");
             }
-            else
-            {
-                idClient.IsDeleted = true;
-                idClient.DeletedOn = DateTime.UtcNow;
 
-                await _context.SaveChangesAsync();
+            idClient.IsDeleted = true;
+            idClient.DeletedOn = DateTime.UtcNow;
 
-                return result.Ok(idClient);
-            }
+            await _context.SaveChangesAsync();
+
+            return result.Ok(idClient);
+            
         }
         public bool IsValidPhoneNumber(string phoneNumber)
         {

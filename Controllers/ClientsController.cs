@@ -44,18 +44,21 @@ namespace ProjectTwo.Controllers
             {
                 var getClientId = await _clientsService.GetClientByIdAsync(id);
 
-                if(getClientId.Success == true)
+                if(getClientId.Success)
                 {
                     return Ok(getClientId);
                 }
-                else
+
+                return BadRequest(new
                 {
-                    return NotFound(getClientId.Fail(errorMessage: "Cliente não encontrado", errorType: "Not Found 404"));
-                }
+                    Message = getClientId.ErrorMessage,
+                    ErrorType = getClientId.ErrorType
+                });
+
             }
             catch
             {
-                return BadRequest("erro no serviço.");
+                return BadRequest("Erro no serviço.");
             }
         }
 
@@ -67,9 +70,26 @@ namespace ProjectTwo.Controllers
         [Route("AddClients")]
         public async Task<ActionResult<ClientsModel>> AddClients(ClientsModel clients)
         {
-            var addClient = await _clientsService.AddClientsAsync(clients);
+            try
+            {
+                var addClient = await _clientsService.AddClientsAsync(clients);
 
-            return Ok(clients);
+                if(addClient.Success)
+                {
+                    return Ok(clients);
+                }
+
+                return BadRequest(new
+                {
+                    Message = addClient.ErrorMessage,
+                    ErrorType = addClient.ErrorType
+                });
+
+            }
+            catch
+            {
+                return BadRequest("Erro no servidor.");
+            }
         }
 
         /// <summary>
@@ -85,21 +105,31 @@ namespace ProjectTwo.Controllers
             {
                 var idClient = await _clientsService.UpdateClientAsync(id, dto);
 
-                var result = new ClientsDTO
+                if (idClient.Success)
                 {
-                    Id = dto.Id,
-                    PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : null,
-                    Email = !string.IsNullOrEmpty(dto.Email) ? dto.Email : null,
-                    Address = dto.Address,
-                    City = dto.City,
-                    Number = dto.Number > 0 ? dto.Number : (int?)null
-                };
+                    var result = new ClientsDTO
+                    {
+                        Id = dto.Id,
+                        PhoneNumber = !string.IsNullOrEmpty(dto.PhoneNumber) ? dto.PhoneNumber : null,
+                        Email = !string.IsNullOrEmpty(dto.Email) ? dto.Email : null,
+                        Address = dto.Address,
+                        City = dto.City,
+                        Number = dto.Number > 0 ? dto.Number : (int?)null
+                    };
 
-                return Ok(result);
+                    return Ok(result);
+                }
+
+                return BadRequest(new
+                {
+                    Message = idClient.ErrorMessage,
+                    ErrorType = idClient.ErrorType
+                });
+
             }
-            catch (KeyNotFoundException ex)
+            catch
             {
-                return NotFound(ex.Message);
+                return BadRequest("erro no servidor.");
             }
         }
 
@@ -115,12 +145,22 @@ namespace ProjectTwo.Controllers
             try
             {
                 var idClient = await _clientsService.InactiveClientAsync(id);
+                
+                if (idClient.Success)
+                {
+                    return Ok($"O cliente de Id: {id}, foi inativado com sucesso.");
+                }
 
-                return Ok($"O cliente de Id: {id}, foi inativado com sucesso.");
+                return BadRequest(new
+                {
+                    Message = idClient.ErrorMessage,
+                    ErrorType = idClient.ErrorType
+                });
+                
             }
-            catch (KeyNotFoundException ex)
+            catch
             {
-                return NotFound(ex.Message);
+                return BadRequest("Erro no serviço.");
             }
         }
 
@@ -137,11 +177,21 @@ namespace ProjectTwo.Controllers
             {
                 var idClient = await _clientsService.ActiveClientAsync(id);
 
-                return Ok($"O cliente de Id: {id}, foi ativado com sucesso.");
+                if(idClient.Success)
+                {
+                    return Ok($"O cliente de Id: {id}, foi ativado com sucesso.");
+                }
+
+                return BadRequest(new
+                {
+                    Message = idClient.ErrorMessage,
+                    ErrorType = idClient.ErrorType
+                });
+                
             }
-            catch (KeyNotFoundException ex)
+            catch
             {
-                return NotFound(ex.Message);
+                return BadRequest("Erro no serviço");
             }
         }
 
@@ -158,11 +208,20 @@ namespace ProjectTwo.Controllers
             {
                 var idClient = await _clientsService.DeleteClientAsync(id);
 
-                return Ok($"O cliente de Id: {id}, foi deletado com sucesso.");
+                if (idClient.Success)
+                {
+                    return Ok($"O cliente de Id: {id}, foi deletado com sucesso.");
+                }
+
+                return BadRequest(new
+                {
+                    Message = idClient.ErrorMessage,
+                    ErrorType = idClient.ErrorType
+                });
             }
-            catch (KeyNotFoundException ex)
+            catch
             {
-                return NotFound(ex.Message);
+                return BadRequest("Erro no serviço.");
             }
         }
     }
