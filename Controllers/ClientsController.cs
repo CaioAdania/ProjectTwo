@@ -6,6 +6,7 @@ using ProjectTwo.Entities.Models;
 using ProjectTwo.Application.Interfaces;
 using ProjectTwo.Application.Services;
 using ProjectTwo.Application.DTOs;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ProjectTwo.Controllers
 {
@@ -20,18 +21,6 @@ namespace ProjectTwo.Controllers
         }
 
         /// <summary>
-        /// Retorna o cliente com base no Id.
-        /// </summary>
-        /// <returns>Retorna o cliente pelo Id.</returns>
-        [HttpGet]
-        [Route("{id}/GetClientById")]
-        public async Task<ActionResult<List<ClientsModel>>> GetClientById(int id)
-        {
-            var getClientId = await _clientsService.GetClientByIdAsync(id);
-            return Ok(getClientId);
-        }
-
-        /// <summary>
         /// Traz todos os clientes.
         /// </summary>
         /// <returns>Retorna todos os clientes da base de dados.</returns>
@@ -41,6 +30,33 @@ namespace ProjectTwo.Controllers
         {
             var getClients = await _clientsService.GetAllClientsAsync();
             return Ok(getClients);
+        }
+
+        /// <summary>
+        /// Retorna o cliente com base no Id.
+        /// </summary>
+        /// <returns>Retorna o cliente pelo Id.</returns>
+        [HttpGet]
+        [Route("{id}/GetClientById")]
+        public async Task<ActionResult<List<ClientsModel>>> GetClientById(int id)
+        {
+            try
+            {
+                var getClientId = await _clientsService.GetClientByIdAsync(id);
+
+                if(getClientId.Success == true)
+                {
+                    return Ok(getClientId);
+                }
+                else
+                {
+                    return NotFound(getClientId.Fail(errorMessage: "Cliente não encontrado", errorType: "Not Found 404"));
+                }
+            }
+            catch
+            {
+                return BadRequest("erro no serviço.");
+            }
         }
 
         /// <summary>

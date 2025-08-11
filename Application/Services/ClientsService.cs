@@ -32,10 +32,7 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                result.ErrorMessage = "Cliente não localizado.";
-                result.Success = false;
-
-                return result;
+                return result.Fail(errorMessage: "Cliente não encontrado.", errorType: "Not Found 404");
             }
             else
             {
@@ -47,10 +44,17 @@ namespace ProjectTwo.Application.Services
         {
             var result = new OperationResult<ClientsModel>();
 
-            _context.Clients.Add(clients);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Clients.Add(clients);
+                await _context.SaveChangesAsync();
 
-            return result;
+                return result.Ok(clients);
+            }
+            catch
+            {
+                return result.Fail("Bad Request","500");
+            }
         }
         public async Task<OperationResult<ClientsModel>> UpdateClientAsync(int id, ClientsDTO dto)
         {
@@ -62,7 +66,7 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                return result.Fail(errorMessage: "Cliente não encontrado.", errorType: "Not Found 404");
+                return result.Fail("Cliente não encontrado.","Not Found 404");
             }
 
             if (dto.PhoneNumber != null && IsValidPhoneNumber(dto.PhoneNumber))
@@ -111,7 +115,7 @@ namespace ProjectTwo.Application.Services
 
             if(idClient == null)
             {
-                return result.Fail(errorMessage: "Cliente não localizado.", errorType: "Not Found 404");
+                return result.Fail("Cliente não localizado.", "Not Found 404");
             }
             else
             {
@@ -151,11 +155,11 @@ namespace ProjectTwo.Application.Services
 
             if(idClient == null)
             {
-                return result.Fail(errorMessage: "Cliente não localizado.", errorType: "Not Found 404");
+                return result.Fail("Cliente não localizado.", "Not Found 404");
             }
             if(idClient.StateCode == true)
             {
-                return result.Fail(errorMessage: "Não é possivel deletar um cliente ativo.", errorType: "Ok 200");
+                return result.Fail("Não é possivel deletar um cliente ativo.", "Ok 200");
             }
             else
             {
