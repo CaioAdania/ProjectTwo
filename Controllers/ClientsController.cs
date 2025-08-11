@@ -99,7 +99,7 @@ namespace ProjectTwo.Controllers
         /// <returns>Retorna o cliente atualizado.</returns>
         [HttpPut]
         [Route("{id}/UpdateClient")]
-        public async Task<ActionResult<ClientsModel>> UpdateClient(int id, [FromBody] ClientsDTO dto)
+        public async Task<ActionResult<ClientsModel>> UpdateClient(int id, [FromBody] ClientsDTO dto) //corrigir, está com erro
         {
             try
             {

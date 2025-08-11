@@ -32,7 +32,7 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                return result.Fail("Cliente não encontrado.", "Not Found 404");
+                return result.Fail("Cliente não encontrado.", "NotFound 404");
             }
             else
             {
@@ -60,14 +60,15 @@ namespace ProjectTwo.Application.Services
         {
             var result = new OperationResult<ClientsModel>();
             var idClient = await _context.Clients.Where(c => c.Id == id).FirstOrDefaultAsync();
-            bool hasUpdates = false;
             
             //ideia é refatorar no futuro
 
             if (idClient == null)
             {
-                return result.Fail("Cliente não encontrado.","Not Found 404");
+                return result.Fail("Cliente não encontrado.","NotFound 404");
             }
+
+            bool hasUpdates = false;
 
             if (dto.PhoneNumber != null && IsValidPhoneNumber(dto.PhoneNumber))
             {
@@ -119,7 +120,7 @@ namespace ProjectTwo.Application.Services
             }
             if(idClient.StateCode == false)
             {
-                return result.Fail("Não é possivel inativar um cliente já inativo", "Bad Request 400");
+                return result.Fail("Cliente já inativo", "BadRequest 400");
             }
 
             idClient.StateCode = false;
@@ -136,11 +137,15 @@ namespace ProjectTwo.Application.Services
 
             if (idClient == null)
             {
-                return result.Fail("Cliente não localizado", "Not Found 404");
+                return result.Fail("Cliente não localizado", "NotFound 404");
             }
             if(idClient.StateCode == true)
             {
-                return result.Fail("Não é possivel ativar um cliente já ativo.", "Bad Request 400");
+                return result.Fail("Cliente já ativo.", "BadRequest 400");
+            }
+            if(idClient.IsDeleted == true)
+            {
+                return result.Fail("Não é possivel ativar um cliente deletado, entre em contato com a equipe de Ti", "BadRequest 400");
             }
            
             idClient.StateCode = true;
@@ -157,7 +162,7 @@ namespace ProjectTwo.Application.Services
 
             if(idClient == null)
             {
-                return result.Fail("Cliente não localizado.", "Not Found 404");
+                return result.Fail("Cliente não localizado.", "NotFound 404");
             }
             if(idClient.StateCode == true)
             {
