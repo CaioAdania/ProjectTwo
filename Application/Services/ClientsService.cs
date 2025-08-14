@@ -53,7 +53,7 @@ namespace ProjectTwo.Application.Services
             }
             catch
             {
-                return result.Fail("Falta campos para serem preenchidos","BadRequest 400");
+                return result.Fail("Faltam campos para serem preenchidos","BadRequest 400");
             }
         }
         public async Task<OperationResult<ClientsModel>> UpdateClientAsync(int id, ClientsDTO dto)

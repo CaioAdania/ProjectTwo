@@ -39,13 +39,18 @@ namespace ProjectTwo.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Traz um item especifico.
+        /// </summary>
+        /// <returns>Retorna item especifico da base de dados.</returns>
         [HttpGet]
         [Route("{id}GetItemById")]
         public async Task<ActionResult<ItensModel>> GetItemById(int id)
         {
             var getItem = await _itensService.GetItemByIdAsync(id);
 
-            if(getItem.Success)
+            if (getItem.Success)
             {
                 return Ok(getItem);
             }
@@ -57,49 +62,84 @@ namespace ProjectTwo.Controllers
             });
         }
 
-        //[HttpPost]
-        //[Route("AddItem")]
-        //public async Task<ActionResult<ItensModel>> AddItens(ItensModel itens)
-        //{
-        //    _context.Itens.Add(itens);
-        //    await _context.SaveChangesAsync();
 
-        //    return Ok(itens);
-        //}
+        /// <summary>
+        /// Inclui um item a base de dados.
+        /// </summary>
+        /// <returns>Retorna o item incluido.</returns>
+        [HttpPost]
+        [Route("AddItem")]
+        public async Task<ActionResult<ItensModel>> AddItens(ItensModel itens)
+        {
+            var addItem = await _itensService.AddItensAsync(itens);
 
+            if (addItem.Success)
+            {
+                return Ok(addItem);
+            }
+
+            return BadRequest(new
+            {
+                Message = addItem.ErrorMessage,
+                ErrorType = addItem.ErrorType
+            });
+        }
+
+        /// <summary>
+        /// Inativa um item.
+        /// </summary>
+        /// <returns>Retorna o item inativado.</returns>
+        [HttpPut]
+        [Route("{id}InactiveItem")]
+        public async Task<ActionResult<ItensModel>> InactiveItem(int id)
+        {
+            try
+            {
+                var inactiveItem = await _itensService.InactiveItemAsync(id);
+
+                if (inactiveItem.Success)
+                {
+                    return Ok($"Item de Id: {id} foi inativado");
+                }
+
+                return BadRequest(new
+                {
+                    Message = inactiveItem.ErrorMessage,
+                    ErrorType = inactiveItem.ErrorType
+                });
+            }
+            catch
+            {
+                return BadRequest("Erro no serviço.");
+            }
+        }
+
+        /// <summary>
+        /// Ativa um item.
+        /// </summary>
+        /// <returns>Retorna o item ativado.</returns>
         //[HttpPut]
-        //[Route("InactiveItem")]
-        //public async Task<ActionResult<ItensModel>> InactiveItem(int id)
+        //[Route("{id}ActiveItem")]
+        //public async Task<ActionResult<ItensModel>> ActiveItem(int id)
         //{
         //    try
         //    {
-        //        var inactive = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+        //        var activeItem = await _itensService.ActiveItemAsync(id);
 
-        //        if (inactive != null)
+        //        if (activeItem.Success)
         //        {
-        //            if (inactive.Amout != 0)
-        //            {
-        //                return Ok(new { warning = "Não é possível inativar produtos que possuem estoque." });
-        //            }
-        //            else
-        //            {
-        //                inactive.StateCode = false;
-        //                inactive.IsDeleted = true;
-        //                inactive.DeletedOn = DateTime.Now;
-
-        //                await _context.SaveChangesAsync();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Produto não encontrado.");
+        //            return Ok($"Item de Id: {id} foi ativado");
         //        }
 
-        //        return Ok(inactive);
+        //        return BadRequest(new
+        //        {
+        //            Message = activeItem.ErrorMessage,
+        //            ErrorType = activeItem.ErrorType
+        //        });
         //    }
-        //    catch (Exception ex)
+        //    catch
         //    {
-        //        throw ex;
+        //        return BadRequest("Erro no serviço.");
         //    }
         //}
 
