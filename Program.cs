@@ -33,6 +33,7 @@ namespace ProjectTwo
             });
 
             builder.Services.AddScoped<IClientsService, ClientsService>();
+            builder.Services.AddScoped<IItensService, ItensService>();
 
             var app = builder.Build();
 
