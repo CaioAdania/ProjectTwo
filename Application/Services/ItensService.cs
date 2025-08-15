@@ -122,7 +122,7 @@ namespace ProjectTwo.Application.Services
            
         }
 
-        public async Task<OperationResult<ItensModel>> RemoveItemAsync(int id, int amount)
+        public async Task<OperationResult<ItensModel>> RemoveAmountItemAsync(int id, int amount)
         {
             var result = new OperationResult<ItensModel>();
             var idItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
@@ -137,15 +137,34 @@ namespace ProjectTwo.Application.Services
             }
             if(amount == 0)
             {
-                return result.Fail("Nenhum item foi subtraido", "BadRequest 400");
+                return result.Fail("Nenhum item foi subtraido.", "BadRequest 400");
             }
             if(amount > idItem.Amout)
             {
-                return result.Fail($"Não é possivel removar uma quantidade maior que a atual, sendo ela {idItem.Amout}", "BadRequest 400");
+                return result.Fail($"Não é possivel removar uma quantidade maior que a atual, sendo ela {idItem.Amout}.", "BadRequest 400");
             }
 
             idItem.Amout = idItem.Amout - amount;
+            _context.SaveChanges();
 
+            return result.Ok(idItem);
+        }
+
+        public async Task<OperationResult<ItensModel>> AddAmountItemAsync(int id, int amount)
+        {
+            var result = new OperationResult<ItensModel>();
+            var idItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+
+            if (idItem == null)
+            {
+                return result.Fail("Item não foi localizado.","BadRequest 400");
+            }
+            if (idItem.Amout == 0)
+            {
+                return result.Fail("Nenhum item foi adicionado a quantidade.", "BadRequest 400");
+            }
+
+            idItem.Amout = idItem.Amout + amount;
             _context.SaveChanges();
 
             return result.Ok(idItem);

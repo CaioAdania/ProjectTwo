@@ -7,6 +7,7 @@ using ProjectTwo.Entities.Models;
 using ProjectTwo.Infrastruture.Data;
 using ProjectTwo.Application.Interfaces;
 using System.Net.Sockets;
+using ProjectTwo.Entities.Response;
 
 namespace ProjectTwo.Controllers
 {
@@ -143,6 +144,10 @@ namespace ProjectTwo.Controllers
             }
         }
 
+        /// <summary>
+        /// Deleta um item.
+        /// </summary>
+        /// <returns>Retorna o item deletado.</returns>
         [HttpDelete]
         [Route("{id}/DeleteItem")]
         public async Task<ActionResult<ItensModel>> DeleteItem(int id)
@@ -162,19 +167,23 @@ namespace ProjectTwo.Controllers
                     ErrorType = deleteItem.ErrorType
                 });
             }
-            catch 
+            catch
             {
                 return BadRequest("Erro no serviço.");
             }
         }
 
+        /// <summary>
+        /// Diminui a quantidade do estoque.
+        /// </summary>
+        /// <returns>Retorna a quantidade de itens removidos do estoque.</returns>
         [HttpPut]
-        [Route("{id}/RemoveItens")]
-        public async Task<ActionResult<ItensModel>> RemoveItens(int id, int amount)
+        [Route("{id}/RemoveQuantityItens")]
+        public async Task<ActionResult<ItensModel>> RemoveQuantityItens(int id, int amount)
         {
             try
             {
-                var idItem = await _itensService.RemoveItemAsync(id, amount);
+                var idItem = await _itensService.RemoveAmountItemAsync(id, amount);
 
                 if (idItem.Success)
                 {
@@ -186,6 +195,35 @@ namespace ProjectTwo.Controllers
                     Message = idItem.ErrorMessage,
                     ErrorType = idItem.ErrorType
                 });
+            }
+            catch
+            {
+                return BadRequest("Erro no serviço.");
+            }
+        }
+
+        /// <summary>
+        /// Aumenta a quantidade do estoque.
+        /// </summary>
+        /// <returns>Retorna a quantidade de itens adicionados ao estoque.</returns>
+        [HttpPut]
+        [Route("{id}/AddQuantityItens")]
+        public async Task<OperationResult<ItensModel>> AddQuantityItens(int id, int amount)
+        {
+            try
+            {
+                var idItemAdd = await _itensService.AddAmountItemAsync(id, amount);
+
+                if (idItemAdd.Success)
+                {
+                    return Ok(idItemAdd.Data);
+                }
+
+                return BadRequest(new
+                {
+                    Message = idItemAdd.ErrorMessage,
+                    ErrorType = idItemAdd.ErrorType
+                })
             }
             catch
             {
