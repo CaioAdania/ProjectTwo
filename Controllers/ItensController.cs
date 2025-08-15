@@ -45,14 +45,14 @@ namespace ProjectTwo.Controllers
         /// </summary>
         /// <returns>Retorna item especifico da base de dados.</returns>
         [HttpGet]
-        [Route("{id}GetItemById")]
+        [Route("{id}/GetItemById")]
         public async Task<ActionResult<ItensModel>> GetItemById(int id)
         {
             var getItem = await _itensService.GetItemByIdAsync(id);
 
             if (getItem.Success)
             {
-                return Ok(getItem);
+                return Ok(getItem.Data);
             }
 
             return BadRequest(new
@@ -75,7 +75,7 @@ namespace ProjectTwo.Controllers
 
             if (addItem.Success)
             {
-                return Ok(addItem);
+                return Ok(addItem.Data);
             }
 
             return BadRequest(new
@@ -90,7 +90,7 @@ namespace ProjectTwo.Controllers
         /// </summary>
         /// <returns>Retorna o item inativado.</returns>
         [HttpPut]
-        [Route("{id}InactiveItem")]
+        [Route("{id}/InactiveItem")]
         public async Task<ActionResult<ItensModel>> InactiveItem(int id)
         {
             try
@@ -118,88 +118,79 @@ namespace ProjectTwo.Controllers
         /// Ativa um item.
         /// </summary>
         /// <returns>Retorna o item ativado.</returns>
-        //[HttpPut]
-        //[Route("{id}ActiveItem")]
-        //public async Task<ActionResult<ItensModel>> ActiveItem(int id)
-        //{
-        //    try
-        //    {
-        //        var activeItem = await _itensService.ActiveItemAsync(id);
+        [HttpPut]
+        [Route("{id}/ActiveItem")]
+        public async Task<ActionResult<ItensModel>> ActiveItem(int id)
+        {
+            try
+            {
+                var activeItem = await _itensService.ActiveItemAsync(id);
 
-        //        if (activeItem.Success)
-        //        {
-        //            return Ok($"Item de Id: {id} foi ativado");
-        //        }
+                if (activeItem.Success)
+                {
+                    return Ok($"Item de Id: {id} foi ativado");
+                }
 
-        //        return BadRequest(new
-        //        {
-        //            Message = activeItem.ErrorMessage,
-        //            ErrorType = activeItem.ErrorType
-        //        });
-        //    }
-        //    catch
-        //    {
-        //        return BadRequest("Erro no serviço.");
-        //    }
-        //}
+                return BadRequest(new
+                {
+                    Message = activeItem.ErrorMessage,
+                    ErrorType = activeItem.ErrorType
+                });
+            }
+            catch
+            {
+                return BadRequest("Erro no serviço.");
+            }
+        }
 
-        //[HttpDelete]
-        //[Route("DeleteItem")]
-        //public async Task<ActionResult<ItensModel>> DeleteItem(int id)
-        //{
-        //    try
-        //    {
-        //        var deleteItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+        [HttpDelete]
+        [Route("{id}/DeleteItem")]
+        public async Task<ActionResult<ItensModel>> DeleteItem(int id)
+        {
+            try
+            {
+                var deleteItem = await _itensService.DeleteItemAsync(id);
 
-        //        if (deleteItem != null)
-        //        {
-        //            if (deleteItem.StateCode == true)
-        //            {
-        //                return Ok(new { warning = "Não é possível deletar um item ativo no sistema" });
-        //            }
-        //            else
-        //            {
-        //                _context.Itens.Remove(deleteItem);
-        //                await _context.SaveChangesAsync();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Produto não encontrado.");
-        //        }
+                if (deleteItem.Success)
+                {
+                    return Ok($"Item de Id: {id}, foi deletado");
+                }
 
-        //        return Ok(new {message= $"O produto '{deleteItem.Name}', de Id '{deleteItem.Id}', foi deletado."});
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+                return BadRequest(new
+                {
+                    Message = deleteItem.ErrorMessage,
+                    ErrorType = deleteItem.ErrorType
+                });
+            }
+            catch 
+            {
+                return BadRequest("Erro no serviço.");
+            }
+        }
 
-        //[HttpPut]
-        //[Route("UpdateAmoutItens")]
-        //public async Task<ActionResult<ItensModel>> UpdateAmountItens(int id, int amount)
-        //{
-        //    try
-        //    {
-        //        var item = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+        [HttpPut]
+        [Route("{id}/RemoveItens")]
+        public async Task<ActionResult<ItensModel>> RemoveItens(int id, int amount)
+        {
+            try
+            {
+                var idItem = await _itensService.RemoveItemAsync(id, amount);
 
-        //        if (item != null)
-        //        {
-        //            item.Amout = item.Amout - amount;
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        else
-        //        {
-        //            return NotFound("Produto não encontrado.");
-        //        }
+                if (idItem.Success)
+                {
+                    return Ok(idItem.Data);
+                }
 
-        //        return Ok(item);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        ////        throw ex;
-        //    }
-        //}
+                return BadRequest(new
+                {
+                    Message = idItem.ErrorMessage,
+                    ErrorType = idItem.ErrorType
+                });
+            }
+            catch
+            {
+                return BadRequest("Erro no serviço.");
+            }
+        }
     }
 }

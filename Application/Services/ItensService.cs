@@ -98,5 +98,57 @@ namespace ProjectTwo.Application.Services
 
             return result.Ok(activeItem);
         }
+
+        public async Task<OperationResult<ItensModel>> DeleteItemAsync(int id)
+        {
+            var result = new OperationResult<ItensModel>();
+            var deleteItem = _context.Itens.Where(i => i.Id==id).FirstOrDefault();
+
+            if(deleteItem == null)
+            {
+                return result.Fail("Item não foi encontrado.","NotFound 404");
+            }
+            if(deleteItem.StateCode == true)
+            {
+                return result.Fail("Não é possivel deletar um item ativo.","BadRequest 400");
+            }
+
+            deleteItem.IsDeleted = true;
+            deleteItem.DeletedOn = DateTime.Now;
+
+            _context.SaveChanges();
+
+            return result.Ok(deleteItem);
+           
+        }
+
+        public async Task<OperationResult<ItensModel>> RemoveItemAsync(int id, int amount)
+        {
+            var result = new OperationResult<ItensModel>();
+            var idItem = _context.Itens.Where(i => i.Id == id).FirstOrDefault();
+
+            if(idItem == null)
+            {
+                return result.Fail("Item não foi localizado.", "NotFound 404");
+            }
+            if(idItem.Amout == '0')
+            {
+                return result.Fail("Não existe estoque para este item.", "BadRequest 400");
+            }
+            if(amount == 0)
+            {
+                return result.Fail("Nenhum item foi subtraido", "BadRequest 400");
+            }
+            if(amount > idItem.Amout)
+            {
+                return result.Fail($"Não é possivel removar uma quantidade maior que a atual, sendo ela {idItem.Amout}", "BadRequest 400");
+            }
+
+            idItem.Amout = idItem.Amout - amount;
+
+            _context.SaveChanges();
+
+            return result.Ok(idItem);
+        }
     }
 }

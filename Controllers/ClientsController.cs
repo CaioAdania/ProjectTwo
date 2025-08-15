@@ -46,7 +46,7 @@ namespace ProjectTwo.Controllers
 
                 if(getClientId.Success)
                 {
-                    return Ok(getClientId);
+                    return Ok(getClientId.Data);
                 }
 
                 return BadRequest(new
@@ -76,7 +76,7 @@ namespace ProjectTwo.Controllers
 
                 if(addClient.Success)
                 {
-                    return Ok(clients);
+                    return Ok(addClient.Data);
                 }
 
                 return BadRequest(new

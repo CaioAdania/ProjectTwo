@@ -11,5 +11,7 @@ namespace ProjectTwo.Application.Interfaces
         Task<OperationResult<ItensModel>> AddItensAsync(ItensModel itens);
         Task<OperationResult<ItensModel>> InactiveItemAsync(int id);
         Task<OperationResult<ItensModel>> ActiveItemAsync(int id);
+        Task<OperationResult<ItensModel>> DeleteItemAsync(int id);
+        Task<OperationResult<ItensModel>> RemoveItemAsync(int id, int amount);
     }
 }
