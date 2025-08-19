@@ -7,8 +7,11 @@
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string PasswordHash { get; set; }
-        public int Profile { get; set; }
+        public int ProfileTypeId { get; set; }
         public bool StateCode { get; set; }
         public DateTime CreatedOn { get; set; }
+
+
+        public ProfileTypeMemberModel ProfileType { get; set; }
     }
 }
