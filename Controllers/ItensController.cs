@@ -208,7 +208,7 @@ namespace ProjectTwo.Controllers
         /// <returns>Retorna a quantidade de itens adicionados ao estoque.</returns>
         [HttpPut]
         [Route("{id}/AddQuantityItens")]
-        public async Task<OperationResult<ItensModel>> AddQuantityItens(int id, int amount)
+        public async Task<ActionResult<ItensModel>> AddQuantityItens(int id, int amount)
         {
             try
             {
@@ -223,7 +223,7 @@ namespace ProjectTwo.Controllers
                 {
                     Message = idItemAdd.ErrorMessage,
                     ErrorType = idItemAdd.ErrorType
-                })
+                });
             }
             catch
             {

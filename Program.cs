@@ -34,6 +34,7 @@ namespace ProjectTwo
 
             builder.Services.AddScoped<IClientsService, ClientsService>();
             builder.Services.AddScoped<IItensService, ItensService>();
+            builder.Services.AddScoped<IMemberService, MemberService>();
 
             var app = builder.Build();
 

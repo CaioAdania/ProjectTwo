@@ -10,5 +10,6 @@ namespace ProjectTwo.Infrastruture.Data
         public DbSet<ItensModel> Itens { get; set; }
         public DbSet<ClientsModel> Clients { get; set; }
         public DbSet<MembersModel> Members { get; set; }
+        public DbSet<ProfileTypeMemberModel> ProfileTypes { get; set; }
     }
 }
