@@ -4,6 +4,12 @@ using ProjectTwo.Infrastruture.Data;
 using ProjectTwo.Application.Interfaces;
 using ProjectTwo.Application.Services;
 using System.Reflection;
+using ProjectTwo.Infrastruture.Auth;
+using YourProject.Infrastructure.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 namespace ProjectTwo
 {
@@ -36,6 +42,31 @@ namespace ProjectTwo
             builder.Services.AddScoped<IItensService, ItensService>();
             builder.Services.AddScoped<IMemberService, MemberService>();
 
+            var jwtSettings = new JwtSettings();
+            builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
+            builder.Services.AddSingleton(jwtSettings);
+
+            builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.Audience,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+                };
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -47,6 +78,7 @@ namespace ProjectTwo
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

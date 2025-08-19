@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectTwo.Application.DTOs;
 using ProjectTwo.Application.Interfaces;
 using ProjectTwo.Entities.Models;
 using System.Globalization;
@@ -59,6 +61,7 @@ namespace ProjectTwo.Controllers
 
         [HttpPost]
         [Route("{email}/{password}/LoginMember")]
+        [AllowAnonymous]
         public async Task<ActionResult<MembersModel>> LoginMember(string email, string password)
         {
             try
@@ -67,11 +70,19 @@ namespace ProjectTwo.Controllers
 
                 if(loginUser.Success)
                 {
-                    return Ok("Login realizado com sucesso.");
+                    return Ok(new
+                    {
+                        Success = true,
+                        Message = "Login realizado com sucesso.",
+                        Token = loginUser.Data.Token,
+                        Expires = loginUser.Data.Expiration,
+                        User = loginUser.Data.User
+                    });
                 }
 
-                return BadRequest(new
+                return Unauthorized(new
                 {
+                    Success = false,
                     Message = loginUser.ErrorMessage,
                     ErrorType = loginUser.ErrorType
                 });
