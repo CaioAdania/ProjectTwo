@@ -19,6 +19,10 @@ namespace ProjectTwo.Controllers
             _memberService = memberService;
         }
 
+        /// <summary>
+        /// Traz todos os Membros.
+        /// </summary>
+        /// <returns>Retorna todos os Membros da base de dados.</returns>
         [HttpGet]
         [Route("GetAllMembers")]
         public async Task<ActionResult<List<MembersModel>>> GetAllMembers()
@@ -34,6 +38,10 @@ namespace ProjectTwo.Controllers
             }
         }
 
+        /// <summary>
+        /// Adiciona um membro.
+        /// </summary>
+        /// <returns>Retorna o Membro incluido na base de dados.</returns>
         [HttpPost]
         [Route("AddMembers")]
         public async Task<ActionResult<MembersModel>>AddMember(MembersModel membersModel)
@@ -59,6 +67,10 @@ namespace ProjectTwo.Controllers
             } 
         }
 
+        /// <summary>
+        /// Login do membro.
+        /// </summary>
+        /// <returns>Retorna o Login do Membro.</returns>
         [HttpPost]
         [Route("{email}/{password}/LoginMember")]
         [AllowAnonymous]
